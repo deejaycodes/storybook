@@ -18,6 +18,24 @@ class Responses {
       message,
     };
   }
+  loginSuccess(statusCode, token, message) {
+    return {
+      error: false,
+      statusCode,
+      token,
+      message,
+    };
+  }
+
+  signUpSuccess(statusCode, token, message) {
+    return {
+      error: false,
+      statusCode,
+      token,
+      message,
+    };
+  }
+
   output(errorCode, data, count = 0) {
     return {
       count,

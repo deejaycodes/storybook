@@ -20,10 +20,14 @@ class Auth {
 
       //add new user object
       const user = await userServices.addUser(param);
-      await user.generateAuthToken();
+      const token = await user.generateAuthToken();
       await user.save();
       user;
-      res.status(201).send(responsesHelper.success(201, user));
+      res
+        .status(201)
+        .send(
+          responsesHelper.signUpSuccess(201, token, "User created successfully")
+        );
     } catch (error) {
       res.status(500).send(responsesHelper.error(500, `${error}`));
     }
@@ -45,10 +49,17 @@ class Auth {
         //check if password is correct
         if (encryptionManager.compareHashed(password, user.password)) {
           //generate a token for the user to login
-          await user.generateAuthToken();
+          const token = await user.generateAuthToken();
+
           res
             .status(200)
-            .send(responsesHelper.success(200, "User logged in successfully"));
+            .send(
+              responsesHelper.loginSuccess(
+                200,
+                token,
+                "User logged in successfully"
+              )
+            );
         } else {
           return res
             .status(400)
@@ -59,6 +70,20 @@ class Auth {
           .status(400)
           .send(responsesHelper.error(400, "User does not exist"));
       }
+    } catch (error) {
+      res.status(500).send(responsesHelper.error(500, `${error}`));
+    }
+  }
+
+  async logOut(req, res) {
+    //remove user token
+    try {
+      req.user.tokens = req.user.tokens.filter((element) => {
+        return element.token !== req.token;
+      });
+
+      await req.user.save();
+      res.status(200).send(responsesHelper.success(200, "logout succesful"));
     } catch (error) {
       res.status(500).send(responsesHelper.error(500, `${error}`));
     }
