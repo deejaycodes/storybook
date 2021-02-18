@@ -26,7 +26,7 @@ app.use(
 //allow app to use cors
 app.use(cors());
 
-app.use(API_VERSION, authRoutes);
+app.use("/auth", authRoutes);
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
